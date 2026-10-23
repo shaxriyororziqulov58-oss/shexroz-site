@@ -1,0 +1,386 @@
+
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Liquid Glass | Shexroz</title>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+
+body{
+  font-family:"Segoe UI",Arial,sans-serif;
+  color:white;
+  min-height:100vh;
+  background:#020817;
+  overflow-x:hidden;
+}
+
+.background{
+  position:fixed;inset:0;z-index:-5;
+  background:
+    radial-gradient(ellipse at 50% 45%,#087bff40,transparent 65%),
+    linear-gradient(135deg,#06142d,#020817 65%,#071d42);
+}
+
+/* Kursor ortidan yuruvchi ko'k tutun */
+.cursor-glow{
+  position:fixed;left:50%;top:50%;
+  width:420px;height:420px;border-radius:50%;
+  pointer-events:none;z-index:-2;
+  background:radial-gradient(circle,
+    #008cff90 0%,
+    #0066ff55 25%,
+    #153dff30 48%,
+    transparent 72%);
+  filter:blur(28px);
+  transform:translate(-50%,-50%);
+  opacity:1;
+  will-change:left,top;
+}
+
+.smoke{
+  position:fixed;
+  width:160px;height:160px;
+  border-radius:50%;
+  pointer-events:none;z-index:-1;
+  background:radial-gradient(circle,
+    #38baff75 0%,
+    #176dff50 30%,
+    #583cff25 55%,
+    transparent 75%);
+  filter:blur(25px);
+  transform:translate(-50%,-50%);
+  animation:smokeFade 2.5s ease-out forwards;
+}
+
+@keyframes smokeFade{
+  0%{opacity:.9;scale:.45}
+  100%{opacity:0;scale:2.2}
+}
+
+/* RGB yaratuvchi yozuvi */
+.creator{
+  display:block;
+  margin-top:9px;
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:1.4px;
+  white-space:nowrap;
+  background:linear-gradient(90deg,
+    #ff2525,#ffad26,#fff52e,#38ff70,
+    #20eaff,#387bff,#e64cff,#ff2525);
+  background-size:300% 100%;
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+  animation:rgbFlow 4s linear infinite;
+  filter:drop-shadow(0 0 7px #168bff80);
+}
+
+@keyframes rgbFlow{
+  from{background-position:0% 50%}
+  to{background-position:300% 50%}
+}
+
+.glass{
+  background:rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.35);
+  backdrop-filter:blur(25px) saturate(180%);
+  -webkit-backdrop-filter:blur(25px) saturate(180%);
+  box-shadow:inset 0 1px 1px #ffffff50,0 8px 35px #001b5030;
+}
+
+header{
+  position:sticky;top:12px;z-index:10;
+  width:95%;margin:12px auto;
+  padding:12px 18px;min-height:82px;
+  display:flex;align-items:center;
+  justify-content:space-between;gap:12px;
+  border-radius:25px;
+}
+
+.brand{display:flex;flex-direction:column;align-items:flex-start}
+
+.phone{
+  color:white;text-decoration:none;
+  white-space:nowrap;padding:10px 14px;
+  border-radius:40px;border:1px solid #ffffff60;
+  background:#ffffff12;
+}
+
+nav{display:flex;gap:5px;align-items:center}
+nav a{
+  color:white;text-decoration:none;
+  padding:12px;border-radius:14px;transition:.3s
+}
+nav a:hover{background:#ffffff30}
+
+.buttons{display:flex;gap:8px}
+
+button{
+  color:white;font-family:inherit;
+  cursor:pointer;transition:transform .25s,background .3s
+}
+
+.header-btn{
+  border:1px solid #ffffff60;
+  padding:12px 16px;border-radius:40px;
+  background:#ffffff18
+}
+.start{background:#168bff70}
+.stop{background:#ff4c8570}
+button:hover{transform:translateY(-2px);background-color:#ffffff40}
+
+main{
+  width:92%;max-width:1350px;min-height:80vh;
+  margin:auto;padding:35px 0;
+  display:grid;grid-template-columns:1fr 1fr;
+  align-items:center;gap:40px
+}
+
+.hero h1{
+  font-size:clamp(45px,5.5vw,78px);
+  line-height:1;margin:25px 0;letter-spacing:-2px
+}
+.hero h1 span{color:#8edbff}
+.hero p{font-size:17px;line-height:1.8;max-width:500px}
+
+.tag{display:inline-block;padding:12px 18px;border-radius:30px}
+
+.game{
+  width:100%;max-width:390px;justify-self:center;
+  margin-top:30px;padding:25px;border-radius:28px;
+  text-align:center
+}
+.game h2{font-size:27px;margin-bottom:8px}
+#gameStatus{margin:12px 0 20px;min-height:24px}
+.board{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.cell{
+  aspect-ratio:1;border-radius:17px;font-size:42px;
+  font-weight:700;background:#ffffff15;
+  border:1px solid #ffffff60;backdrop-filter:blur(15px)
+}
+.cell:hover{background:#ffffff35}
+.cell:disabled{cursor:default}
+.reset{
+  margin-top:20px;padding:13px 20px;
+  border:1px solid #ffffff60;border-radius:30px;
+  background:#ffffff18
+}
+
+.form{
+  width:100%;max-width:500px;
+  justify-self:end;padding:30px;border-radius:28px
+}
+.form h2{font-size:26px;margin-bottom:8px}
+.subtitle{opacity:.85;margin-bottom:20px}
+.field{margin:14px 0}
+.field input{
+  width:100%;height:55px;padding:0 17px;
+  border-radius:17px;color:white;font-size:15px;
+  outline:none;background:#ffffff12;
+  border:1px solid #ffffff65
+}
+.field input::placeholder{color:#ffffffd0}
+.field input:focus{
+  background:#ffffff28;border-color:#8edbff;
+  box-shadow:0 0 0 3px #36aaff20
+}
+.submit{
+  width:100%;height:56px;border-radius:17px;
+  margin-top:8px;font-size:16px;
+  border:1px solid #ffffff60;
+  background:linear-gradient(100deg,#18baff,#2854ff)
+}
+#message{text-align:center;margin-top:12px;font-size:14px}
+footer{text-align:center;padding:20px;opacity:.75}
+
+@media(max-width:900px){
+  header{flex-wrap:wrap;justify-content:center}
+  .brand{align-items:center}
+  nav{order:3;width:100%;justify-content:center;flex-wrap:wrap}
+  main{grid-template-columns:1fr}
+  .hero{text-align:center}
+  .hero p{margin:auto}
+  .form{justify-self:center}
+}
+
+@media(max-width:480px){
+  header{width:96%;padding:10px}
+  .phone{font-size:12px}
+  .creator{font-size:10px;letter-spacing:1px}
+  .header-btn{font-size:12px;padding:10px}
+  nav a{font-size:12px;padding:9px}
+  .form,.game{padding:22px}
+}
+</style>
+</head>
+
+<body>
+<div class="background"></div>
+<div class="cursor-glow" id="cursorGlow"></div>
+
+<header class="glass">
+  <div class="brand">
+    <a class="phone" href="tel:200069411">? 20 006 94 11</a>
+    <span class="creator">? YARATUVCHI: SHEXROZ ORZUKULOV ?</span>
+  </div>
+
+  <nav>
+    <a href="#uy">UY</a>
+    <a href="#haqimizda">BIZ HAQIMIZDA</a>
+    <a href="#forma">TEL</a>
+  </nav>
+
+  <div class="buttons">
+    <button class="header-btn start" id="start">? Boshlash</button>
+    <button class="header-btn stop" id="stop">¦ Tugatish</button>
+  </div>
+</header>
+
+<main id="uy">
+  <section class="hero" id="haqimizda">
+    <div class="tag glass">? LIQUID GLASS EXPERIENCE</div>
+    <h1>Liquid<br><span>Glass.</span></h1>
+    <p>
+      Jonli ko‘k yorug‘lik va tutun animatsiyasi.
+      Kursorni harakatlantiring va yorug‘lik uning
+      ortidan silliq ergashishini ko‘ring.
+    </p>
+
+    <div class="game glass">
+      <h2>? X va O ?</h2>
+      <p id="gameStatus">X navbati</p>
+      <div class="board">
+        <button class="cell"></button><button class="cell"></button><button class="cell"></button>
+        <button class="cell"></button><button class="cell"></button><button class="cell"></button>
+        <button class="cell"></button><button class="cell"></button><button class="cell"></button>
+      </div>
+      <button class="reset glass" id="resetGame">? Qayta boshlash</button>
+    </div>
+  </section>
+
+  <section class="form glass" id="forma">
+    <h2>Ro‘yxatdan o‘ting</h2>
+    <p class="subtitle">Ma’lumotlaringizni kiriting</p>
+    <form id="register">
+      <div class="field"><input type="email" placeholder="? Email manzilingiz" required></div>
+      <div class="field"><input type="tel" placeholder="? Telefon raqamingiz" required></div>
+      <div class="field"><input type="text" placeholder="? Ism" required></div>
+      <div class="field"><input type="text" placeholder="? Familiya" required></div>
+      <button class="submit" type="submit">? Davom etish</button>
+      <p id="message"></p>
+    </form>
+  </section>
+</main>
+
+<footer>Liquid Glass © 2026</footer>
+
+<script>
+const glow=document.getElementById("cursorGlow");
+let mouseX=innerWidth/2,mouseY=innerHeight/2;
+let glowX=mouseX,glowY=mouseY;
+let lastSmoke=0,effectsEnabled=true;
+
+document.addEventListener("pointermove",event=>{
+  mouseX=event.clientX;
+  mouseY=event.clientY;
+
+  if(!effectsEnabled)return;
+
+  const now=performance.now();
+
+  if(now-lastSmoke>65){
+    lastSmoke=now;
+    const smoke=document.createElement("div");
+    smoke.className="smoke";
+    smoke.style.left=mouseX+"px";
+    smoke.style.top=mouseY+"px";
+    document.body.appendChild(smoke);
+    setTimeout(()=>smoke.remove(),2600);
+  }
+});
+
+function animateGlow(){
+  glowX+=(mouseX-glowX)*.12;
+  glowY+=(mouseY-glowY)*.12;
+  glow.style.left=glowX+"px";
+  glow.style.top=glowY+"px";
+  requestAnimationFrame(animateGlow);
+}
+animateGlow();
+
+document.getElementById("start").addEventListener("click",()=>{
+  effectsEnabled=true;
+  glow.style.opacity="1";
+});
+
+document.getElementById("stop").addEventListener("click",()=>{
+  effectsEnabled=false;
+  glow.style.opacity="0";
+  document.querySelectorAll(".smoke").forEach(s=>s.remove());
+});
+
+const cells=[...document.querySelectorAll(".cell")];
+const statusText=document.getElementById("gameStatus");
+const patterns=[
+  [0,1,2],[3,4,5],[6,7,8],
+  [0,3,6],[1,4,7],[2,5,8],
+  [0,4,8],[2,4,6]
+];
+
+let player="X",gameOver=false;
+
+function checkWinner(p){
+  return patterns.some(pattern=>
+    pattern.every(i=>cells[i].textContent===p)
+  );
+}
+
+function move(index){
+  if(gameOver||cells[index].textContent)return;
+
+  cells[index].textContent=player;
+
+  if(checkWinner(player)){
+    gameOver=true;
+    statusText.textContent=player+" g‘alaba qozondi! ??";
+    cells.forEach(c=>c.disabled=true);
+    return;
+  }
+
+  if(cells.every(c=>c.textContent)){
+    gameOver=true;
+    statusText.textContent="Durrang! ??";
+    return;
+  }
+
+  player=player==="X"?"O":"X";
+  statusText.textContent=player+" navbati";
+}
+
+cells.forEach((cell,index)=>
+  cell.addEventListener("click",()=>move(index))
+);
+
+document.getElementById("resetGame").addEventListener("click",()=>{
+  player="X";
+  gameOver=false;
+  cells.forEach(c=>{
+    c.textContent="";
+    c.disabled=false;
+  });
+  statusText.textContent="X navbati";
+});
+
+document.getElementById("register").addEventListener("submit",event=>{
+  event.preventDefault();
+  document.getElementById("message").textContent=
+    "Forma tekshirildi! Hozircha ma'lumotlar yuborilmadi.";
+  document.getElementById("message").style.color="#b7ffdc";
+});
+</script>
+</body>
+</html>
